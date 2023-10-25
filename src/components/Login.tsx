@@ -4,116 +4,95 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
-
-import Box from "@mui/material/Box";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { signInUser } from "../utils/apiCallUtils";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import { LoginDataType } from "../types";
 
 export default function Login(props: { handleSignupCB: () => void }) {
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
   const [rememberMe, setRememberMe] = React.useState(false);
-
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    setLoading(true);
-    if (username === "" || password === "") {
-      setError("Please check the form again");
-      setLoading(false);
-      return;
-
-      //   if (res) {
-      //     if (rememberMe) {
-      //       localStorage.setItem("token", res.token);
-      //     } else {
-      //       sessionStorage.setItem("token", res.token);
-      //     }
-      //     window.location.href = "/home";
-      //   } else {
-      //     setError("Please check the form again");
-      //     setLoading(false);
-      //   }
-      // } catch (error) {
-      //   console.log(error);
-      //   setLoading(false);
+  const { register, handleSubmit } = useForm<LoginDataType>();
+  const navigator = useNavigate();
+  const submit: SubmitHandler<LoginDataType> = async (data: any) => {
+    const { email, password } = data;
+    try {
+      const data = await signInUser({ email, password });
+      if (rememberMe) {
+        localStorage.setItem("token", data.token);
+      } else {
+        sessionStorage.setItem("token", data.token);
+      }
+      localStorage.setItem("userData", JSON.stringify(data.user));
+      navigator("/home");
+    } catch (error: any) {
+      setError(error.message);
     }
   };
 
   return (
     <>
-      {loading ? (
-        <div className="mt-56">Loading??</div>
-      ) : (
-        <>
-          <div className="mt-10"></div>
-          <Typography component="h1" variant="h5">
-            Login
-          </Typography>
-          <Box component="form" onSubmit={submit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              label="Username"
-              name="username"
-              autoFocus
+      <Typography component="h1" variant="h5">
+        Login
+      </Typography>
+      <form onSubmit={handleSubmit(submit)}>
+        <TextField
+          margin="normal"
+          {...register("email", { required: true })}
+          fullWidth
+          id="email"
+          label="Email Id"
+          name="email"
+          autoFocus
+        />
+        <TextField
+          margin="normal"
+          fullWidth
+          {...register("password", { required: true })}
+          name="password"
+          label="Password"
+          type="password"
+          id="password"
+        />
+        {error && <div className="text-red-500">{error}</div>}
+        <FormControlLabel
+          control={
+            <Checkbox
+              value="remember"
+              color="primary"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {error && <div className="text-red-500">{error}</div>}
-            <FormControlLabel
-              control={
-                <Checkbox
-                  value="remember"
-                  color="primary"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-              }
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+          }
+          label="Remember me"
+        />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Login
+        </Button>
+        <Grid container>
+          <Grid item xs>
+            <Link href="#" className="hover:cursor-pointer" variant="body2">
+              About OnTrack?
+            </Link>
+          </Grid>
+          <Grid item>
+            <Link
+              onClick={props.handleSignupCB}
+              className="hover:cursor-pointer"
+              variant="body2"
             >
-              Login
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" className="hover:cursor-pointer" variant="body2">
-                  About OnTrack?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link
-                  onClick={props.handleSignupCB}
-                  className="hover:cursor-pointer"
-                  variant="body2"
-                >
-                  Don't have an account? Sign Up
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </>
-      )}
+              Don't have an account? Sign Up
+            </Link>
+          </Grid>
+        </Grid>
+      </form>
     </>
   );
 }

@@ -50,7 +50,9 @@ export default function LoginAndSignUp() {
               alignItems: "center",
             }}
           >
-            <div className="w-80">Sportify</div>
+            <div className="mt-5 mb-5">
+              <img src="src/assets/crlogo1.png" alt="" />
+            </div>
             {signupForm ? (
               <SignUp handleSignupCB={handleSignup} />
             ) : (
