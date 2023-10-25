@@ -153,7 +153,7 @@ export function ComplexNavbar() {
     >
       <div className="relative mx-auto flex items-center justify-center  text-blue-gray-900 ">
         <div className="ml-1 mr-1">
-          <img src="/assets/crlogo1.png" width={200} />
+          <img src="/crlogo1.png" width={200} />
         </div>
         <div className="hidden lg:block">
           <NavList />
