@@ -79,7 +79,7 @@ export default function Login(props: { handleSignupCB: () => void }) {
         <Grid container>
           <Grid item xs>
             <Link href="#" className="hover:cursor-pointer" variant="body2">
-              About OnTrack?
+              About sportify?
             </Link>
           </Grid>
           <Grid item>

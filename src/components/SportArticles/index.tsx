@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Article, Team } from "../../types";
 import { HorizontalCard } from "./SportArticleCard";
 
-export function TabsCustomAnimation() {
+export function Articles() {
   const [sports, setSports] = useState<Team[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [filterSportId, setFilterSportId] = useState<string | null>(null);

@@ -1,13 +1,13 @@
 import "./App.css";
-
-//import routes from "./router";
+import { RouterProvider } from "react-router-dom";
+import routes from "./router";
 
 import Home from "./pages/Home";
 
 function App() {
   return (
     <>
-      <Home />
+      <RouterProvider router={routes} />
     </>
   );
 }

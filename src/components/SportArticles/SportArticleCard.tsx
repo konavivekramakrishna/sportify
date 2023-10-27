@@ -6,11 +6,10 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { Article } from "../../types";
-import BasicModal from "./SportsArticleModal";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export function HorizontalCard(props: { article: Article }) {
-  const [open, setOpen] = useState(false);
+  const navigator = useNavigate();
 
   return (
     <Card className="w-full m-2 p-1 max-w-[75rem] max-h-41 flex-row">
@@ -38,30 +37,28 @@ export function HorizontalCard(props: { article: Article }) {
           {props.article.summary}
         </Typography>
         <a href="#" className="inline-block">
-          <Button
-            variant="text"
-            onClick={() => setOpen(true)}
-            className="flex items-center gap-2"
-          >
-            Read More
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              className="h-4 w-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-              />
-            </svg>
-          </Button>
+          <Link to={`article/${props.article.id}`}>
+            <Button variant="text" className="flex items-center gap-2">
+              Read More
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                className="h-4 w-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                />
+              </svg>
+            </Button>
+          </Link>
         </a>
       </CardBody>
-      <BasicModal open={open} setOpen={setOpen} article={props.article} />
+      {/* //  <BasicModal open={open} setOpen={setOpen} article={props.article} /> */}
     </Card>
   );
 }
