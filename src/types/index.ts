@@ -11,6 +11,18 @@ export type LoginDataType = {
   password: string;
 };
 
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  preferences: any;
+};
+
+export interface Sport {
+  id: number;
+  name: string;
+}
+
 export interface Article {
   title: string;
   thumbnail: string;
@@ -39,4 +51,5 @@ export interface Score {
 export interface Team {
   id: number;
   name: string;
+  sportName: string;
 }

@@ -1,20 +1,24 @@
 import { Tabs, TabsHeader, Tab, Typography } from "@material-tailwind/react";
-import { fetchAllArticles, fetchAllSports } from "../../utils/apiCallUtils";
-import { useEffect, useState } from "react";
-import { Article, Team } from "../../types";
+import { fetchAllArticles } from "../../utils/apiCallUtils";
+import React, { useEffect, useState } from "react";
+import { Article } from "../../types";
 import { HorizontalCard } from "./SportArticleCard";
+import { sportContext } from "../../context/sports";
+import { UserContext } from "../../context/user";
 
 export function Articles() {
-  const [sports, setSports] = useState<Team[]>([]);
+  const sports = React.useContext(sportContext);
   const [articles, setArticles] = useState<Article[]>([]);
   const [filterSportId, setFilterSportId] = useState<string | null>(null);
 
+  const user = React.useContext(UserContext);
+
+  console.log(user.user);
+
   useEffect(() => {
     const fetchData = async () => {
-      const sportsData = await fetchAllSports();
       const articlesData = await fetchAllArticles();
 
-      setSports(sportsData.sports);
       setArticles(articlesData);
       setFilterSportId("all");
     };
@@ -43,16 +47,18 @@ export function Articles() {
           >
             All
           </Tab>
-          {sports.map((sport) => (
-            <Tab
-              onClick={() => setFilterSportId(String(sport.id))}
-              key={sport.id}
-              value={String(sport.id)}
-              className="text-blue-gray-500 h-10"
-            >
-              {sport.name}
-            </Tab>
-          ))}
+
+          {sports.sport.length > 0 &&
+            sports.sport.map((sport) => (
+              <Tab
+                onClick={() => setFilterSportId(String(sport.id))}
+                key={sport.id}
+                value={String(sport.id)}
+                className="text-blue-gray-500 h-10"
+              >
+                {sport.name}
+              </Tab>
+            ))}
         </TabsHeader>
       </Tabs>
       {filteredArticles.length > 0 ? (

@@ -1,16 +1,20 @@
 import LiveMatches from "../components/LiveMatches/LiveMatches";
-import { ComplexNavbar } from "../components/Navbar";
+import { Appbar } from "../components/Navbar";
 import { Outlet } from "react-router-dom";
 
 import { Articles } from "../components/SportArticles";
 
 export default function Home() {
   return (
-    <>
-      <ComplexNavbar />
+    <div style={{ overflowY: "auto", height: "100vh" }}>
+      <Appbar />
       <LiveMatches />
-      <Articles />
+      <div className="grid grid-cols-4 gap-4">
+        <div className="col-span-3">
+          <Articles />
+        </div>
+      </div>
       <Outlet />
-    </>
+    </div>
   );
 }

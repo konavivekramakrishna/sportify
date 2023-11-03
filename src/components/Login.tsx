@@ -10,8 +10,11 @@ import { signInUser } from "../utils/apiCallUtils";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { LoginDataType } from "../types";
+import { Link as Navigate } from "react-router-dom";
+import { UserContext } from "../context/user";
 
 export default function Login(props: { handleSignupCB: () => void }) {
+  const { setUser } = React.useContext(UserContext);
   const [error, setError] = React.useState("");
   const [rememberMe, setRememberMe] = React.useState(false);
   const { register, handleSubmit } = useForm<LoginDataType>();
@@ -20,13 +23,18 @@ export default function Login(props: { handleSignupCB: () => void }) {
     const { email, password } = data;
     try {
       const data = await signInUser({ email, password });
-      if (rememberMe) {
-        localStorage.setItem("token", data.token);
+      if (!data.auth_token) {
+        setError("Invalid Credentials");
       } else {
-        sessionStorage.setItem("token", data.token);
+        if (rememberMe) {
+          localStorage.setItem("token", data.auth_token);
+        } else {
+          sessionStorage.setItem("token", data.auth_token);
+        }
+        setUser(data.user);
+        localStorage.setItem("userData", JSON.stringify(data.user));
+        navigator("/home");
       }
-      localStorage.setItem("userData", JSON.stringify(data.user));
-      navigator("/home");
     } catch (error: any) {
       setError(error.message);
     }
@@ -78,9 +86,11 @@ export default function Login(props: { handleSignupCB: () => void }) {
         </Button>
         <Grid container>
           <Grid item xs>
-            <Link href="#" className="hover:cursor-pointer" variant="body2">
-              About sportify?
-            </Link>
+            <Navigate to={"/home"}>
+              <Link href="#" className="hover:cursor-pointer" variant="body2">
+                Home?
+              </Link>
+            </Navigate>
           </Grid>
           <Grid item>
             <Link

@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Navbar,
-  MobileNav,
   Typography,
   Button,
   Menu,
@@ -17,22 +16,42 @@ import {
   Cog6ToothIcon,
   PowerIcon,
 } from "@heroicons/react/24/solid";
+import { UserContext } from "../context/user";
+import { Link } from "react-router-dom";
 
-// Profile menu component
+const casualUser = [
+  {
+    label: "Authentication",
+    icon: UserCircleIcon,
+    action: "/auth",
+  },
+];
+
 const profileMenuItems = [
+  {
+    label: "Preferences",
+    icon: Square3Stack3DIcon,
+    action: "/home/preferences",
+  },
   {
     label: "Reset Password",
     icon: Cog6ToothIcon,
+    action: "/resetpassword",
   },
 
   {
     label: "Sign Out",
     icon: PowerIcon,
+    action: "/signout",
   },
 ];
 
 export function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const { user } = React.useContext(UserContext);
+
+  const options = user ? profileMenuItems : casualUser;
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -60,31 +79,33 @@ export function ProfileMenu() {
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon }, key) => {
+        {options.map(({ label, icon, action }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
           return (
-            <MenuItem
-              key={label}
-              onClick={closeMenu}
-              className={`flex items-center gap-2 rounded ${
-                isLastItem
-                  ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : ""
-              }`}
-            >
-              {React.createElement(icon, {
-                className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
-                strokeWidth: 2,
-              })}
-              <Typography
-                as="span"
-                variant="small"
-                className="font-normal"
-                color={isLastItem ? "red" : "inherit"}
+            <Link to={action}>
+              <MenuItem
+                key={label}
+                onClick={closeMenu}
+                className={`flex items-center gap-2 rounded ${
+                  isLastItem
+                    ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                    : ""
+                }`}
               >
-                {label}
-              </Typography>
-            </MenuItem>
+                {React.createElement(icon, {
+                  className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
+                  strokeWidth: 2,
+                })}
+                <Typography
+                  as="span"
+                  variant="small"
+                  className="font-normal"
+                  color={isLastItem ? "red" : "inherit"}
+                >
+                  {label}
+                </Typography>
+              </MenuItem>
+            </Link>
           );
         })}
       </MenuList>
@@ -92,60 +113,9 @@ export function ProfileMenu() {
   );
 }
 
-function NavListMenu() {
-  return (
-    <React.Fragment>
-      <Typography as="a" href="#" variant="small" className="font-normal">
-        <MenuItem className="hidden items-center gap-2 font-medium text-blue-gray-900 lg:flex lg:rounded-full">
-          <Square3Stack3DIcon className="h-[18px] w-[18px] text-blue-gray-500" />{" "}
-          Preferences
-        </MenuItem>
-      </Typography>
-    </React.Fragment>
-  );
-}
-
 // Nav list component
-const navListItems = [
-  {
-    label: "Account",
-    icon: UserCircleIcon,
-  },
-];
 
-function NavList() {
-  return (
-    <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
-      <NavListMenu />
-      {navListItems.map(({ label, icon }, key) => (
-        <Typography
-          key={key}
-          as="a"
-          href="#"
-          variant="small"
-          color="gray"
-          className="font-medium text-blue-gray-500"
-        >
-          <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            {React.createElement(icon, { className: "h-[18px] w-[18px]" })}{" "}
-            <span className="text-gray-900"> {label}</span>
-          </MenuItem>
-        </Typography>
-      ))}
-    </ul>
-  );
-}
-
-export function ComplexNavbar() {
-  const [isNavOpen, setIsNavOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    window.addEventListener(
-      "resize",
-      () => window.innerWidth >= 960 && setIsNavOpen(false),
-    );
-  }, []);
-
+export function Appbar() {
   return (
     <Navbar
       fullWidth={true}
@@ -155,15 +125,10 @@ export function ComplexNavbar() {
         <div className="ml-1 mr-1">
           <img src="/crlogo1.png" width={200} />
         </div>
-        <div className="hidden lg:block">
-          <NavList />
-        </div>
+        <div className="hidden lg:block"></div>
 
         <ProfileMenu />
       </div>
-      <MobileNav open={isNavOpen} className="overflow-scroll">
-        <NavList />
-      </MobileNav>
     </Navbar>
   );
 }

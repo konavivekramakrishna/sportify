@@ -118,3 +118,8 @@ export const changePassword = async (data: any) => {
 export const createNewUser = async (data: any) => {
   return await apiCall("/users", "POST", data);
 };
+
+// preferences crud
+export const setPreference = async (data: any) => {
+  return await apiCall("/user/preferences", "PATCH", data);
+};

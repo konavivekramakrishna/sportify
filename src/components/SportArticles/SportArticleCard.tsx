@@ -6,11 +6,9 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { Article } from "../../types";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export function HorizontalCard(props: { article: Article }) {
-  const navigator = useNavigate();
-
   return (
     <Card className="w-full m-2 p-1 max-w-[75rem] max-h-41 flex-row">
       <CardHeader

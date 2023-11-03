@@ -1,6 +1,8 @@
 import React, { Suspense } from "react";
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import Preferences from "../components/Preferences";
+import Signout from "../components/Signout";
 //import ArticleModal from "../components/SportArticles/SportsArticleModal";
 
 const ArticleModal = React.lazy(
@@ -32,7 +34,19 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "preferences",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Preferences />
+          </Suspense>
+        ),
+      },
     ],
+  },
+  {
+    path: "/signout",
+    element: <Signout />,
   },
   {
     path: "/auth",

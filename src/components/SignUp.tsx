@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -10,8 +10,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { createNewUser } from "../utils/apiCallUtils";
 import { SignUpInputDataType } from "../types";
-
+import { Link as Navigate } from "react-router-dom";
+import { UserContext } from "../context/user";
 export default function SignUp(props: { handleSignupCB: () => void }) {
+  const { setUser } = React.useContext(UserContext);
   const navigator = useNavigate();
   const [error, setError] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -31,7 +33,7 @@ export default function SignUp(props: { handleSignupCB: () => void }) {
       } else {
         sessionStorage.setItem("token", res.token);
       }
-
+      setUser(res.user);
       localStorage.setItem("userData", JSON.stringify(res.user));
       navigator("/home");
     } catch (error: any) {
@@ -98,9 +100,11 @@ export default function SignUp(props: { handleSignupCB: () => void }) {
       </form>
       <Grid container>
         <Grid item xs>
-          <Link href="#" className="hover:cursor-pointer" variant="body2">
-            About Sportify?
-          </Link>
+          <Navigate to={"/home"}>
+            <Link href="#" className="hover:cursor-pointer" variant="body2">
+              Home?
+            </Link>
+          </Navigate>
         </Grid>
         <Grid item>
           <Link
