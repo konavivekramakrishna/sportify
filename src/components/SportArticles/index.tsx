@@ -1,24 +1,37 @@
-import { Tabs, TabsHeader, Tab, Typography } from "@material-tailwind/react";
-import { fetchAllArticles } from "../../utils/apiCallUtils";
 import React, { useEffect, useState } from "react";
-import { Article } from "../../types";
+import { Article, Team } from "../../types";
 import { HorizontalCard } from "./SportArticleCard";
 import { sportContext } from "../../context/sports";
 import { UserContext } from "../../context/user";
+import { Tabs, TabsHeader, Tab, Typography } from "@material-tailwind/react";
+import { fetchAllArticles } from "../../utils/apiCallUtils";
+import { teamData } from "../../utils/helperFunctions";
 
 export function Articles() {
-  const sports = React.useContext(sportContext);
+  const { sport } = React.useContext(sportContext);
+  const { user } = React.useContext(UserContext);
+
   const [articles, setArticles] = useState<Article[]>([]);
   const [filterSportId, setFilterSportId] = useState<string | null>(null);
+  const [selectedSports, setSelectedSports] = useState<number[]>(
+    user?.preferences?.sports || []
+  );
 
-  const user = React.useContext(UserContext);
+  const selectedTeams: Team[] = user?.preferences?.teams || [];
 
-  console.log(user.user);
+  const sportThasTeamsSelected = selectedSports.filter((sportId) => {
+    return selectedTeams.some((team) => teamData[sportId].includes(team.name));
+  });
+
+  useEffect(() => {
+    if (user) {
+      setSelectedSports(user.preferences.sports);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
       const articlesData = await fetchAllArticles();
-
       setArticles(articlesData);
       setFilterSportId("all");
     };
@@ -26,12 +39,61 @@ export function Articles() {
     fetchData();
   }, []);
 
-  const filteredArticles = filterSportId
-    ? articles.filter(
-        (article) =>
-          filterSportId === "all" || article.sport.id === Number(filterSportId),
-      )
-    : [];
+  const filteredArticles = articles.filter((article) => {
+    if (!user && filterSportId === "all") {
+      return article;
+    }
+    if (!user && filterSportId !== "all") {
+      return article.sport.id === Number(filterSportId);
+    }
+    if (filterSportId == "all") {
+      return selectedSports.includes(article.sport.id);
+    }
+    if (
+      filterSportId !== "all" &&
+      !sportThasTeamsSelected.includes(Number(filterSportId))
+    ) {
+      return article.sport.id === Number(filterSportId);
+    }
+    if (
+      filterSportId !== "all" &&
+      sportThasTeamsSelected.includes(Number(filterSportId))
+    ) {
+      return article.teams.some((articleTeam) => {
+        const articleTeamName = articleTeam.name;
+        return selectedTeams.some((selectedTeam) => {
+          const selectedTeamName = selectedTeam.name;
+          return articleTeamName === selectedTeamName;
+        });
+      });
+    }
+  });
+
+
+  const sportsToDisplay = user
+    ? sport.filter((s) => selectedSports.includes(s.id))
+    : sport;
+
+  const sportsTabs = [
+    <Tab
+      onClick={() => setFilterSportId("all")}
+      value="all"
+      key="all"
+      className="text-blue-gray-500 h-10"
+    >
+      All
+    </Tab>,
+    ...sportsToDisplay.map((sport) => (
+      <Tab
+        onClick={() => setFilterSportId(String(sport.id))}
+        value={String(sport.id)}
+        key={sport.id}
+        className="text-blue-gray-500 h-10"
+      >
+        {sport.name}
+      </Tab>
+    )),
+  ];
 
   return (
     <div className="p-1 m-1 mt-5">
@@ -39,27 +101,7 @@ export function Articles() {
         Articles
       </Typography>
       <Tabs id="custom-animation" value={filterSportId || "all"}>
-        <TabsHeader>
-          <Tab
-            onClick={() => setFilterSportId("all")}
-            value="all"
-            className="text-blue-gray-500 h-10"
-          >
-            All
-          </Tab>
-
-          {sports.sport.length > 0 &&
-            sports.sport.map((sport) => (
-              <Tab
-                onClick={() => setFilterSportId(String(sport.id))}
-                key={sport.id}
-                value={String(sport.id)}
-                className="text-blue-gray-500 h-10"
-              >
-                {sport.name}
-              </Tab>
-            ))}
-        </TabsHeader>
+        <TabsHeader>{sportsTabs}</TabsHeader>
       </Tabs>
       {filteredArticles.length > 0 ? (
         filteredArticles.map((article) => (

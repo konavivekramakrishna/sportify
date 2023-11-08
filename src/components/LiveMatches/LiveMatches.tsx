@@ -19,7 +19,7 @@ export default function LiveMatches() {
   return (
     <div className="bg-blue-50 m-2 mt-5 rounded-lg p-3 overflow-x-auto">
       <Typography variant="h4" color="blue-gray">
-        Live Matches
+        Live and Completed Matches
       </Typography>
       <div className="flex flex-row space-x-2">
         {liveMatches &&

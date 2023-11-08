@@ -51,5 +51,5 @@ export interface Score {
 export interface Team {
   id: number;
   name: string;
-  sportName: string;
+  plays: string;
 }
