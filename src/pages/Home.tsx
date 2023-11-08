@@ -9,8 +9,8 @@ export default function Home() {
     <div style={{ overflowY: "auto", height: "100vh" }}>
       <Appbar />
       <LiveMatches />
-      <div className="grid grid-cols-4 gap-4">
-        <div className="col-span-3">
+      <div className=" ">
+        <div className=" ">
           <Articles />
         </div>
       </div>

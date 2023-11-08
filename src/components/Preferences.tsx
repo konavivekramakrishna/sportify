@@ -39,7 +39,7 @@ export default function Preference() {
     user?.preferences?.teams || []
   );
 
-  console.log(selectedTeams);
+  // console.log(selectedTeams);
 
   const navigate = useNavigate();
 

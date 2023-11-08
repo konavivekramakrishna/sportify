@@ -59,16 +59,18 @@ export function Articles() {
       filterSportId !== "all" &&
       sportThasTeamsSelected.includes(Number(filterSportId))
     ) {
-      return article.teams.some((articleTeam) => {
-        const articleTeamName = articleTeam.name;
-        return selectedTeams.some((selectedTeam) => {
-          const selectedTeamName = selectedTeam.name;
-          return articleTeamName === selectedTeamName;
-        });
-      });
+      return (
+        article.sport.id === Number(filterSportId) &&
+        article.teams.some((articleTeam) => {
+          const articleTeamName = articleTeam.name;
+          return selectedTeams.some((selectedTeam) => {
+            const selectedTeamName = selectedTeam.name;
+            return articleTeamName === selectedTeamName;
+          });
+        })
+      );
     }
   });
-
 
   const sportsToDisplay = user
     ? sport.filter((s) => selectedSports.includes(s.id))
