@@ -32,14 +32,12 @@ export default function Preference() {
   const { sport } = React.useContext(sportContext);
 
   const [selectedSports, setSelectedSports] = useState<Sport[]>(
-    user?.preferences?.sports || []
+    user?.preferences?.sports || [],
   );
 
   const [selectedTeams, setSelectedTeams] = useState<Team[]>(
-    user?.preferences?.teams || []
+    user?.preferences?.teams || [],
   );
-
-  // console.log(selectedTeams);
 
   const navigate = useNavigate();
 
@@ -136,19 +134,19 @@ export default function Preference() {
                             <input
                               type="checkbox"
                               checked={selectedTeams.some(
-                                (selectedTeam) => selectedTeam.id === team.id
+                                (selectedTeam) => selectedTeam.id === team.id,
                               )}
                               onChange={() =>
                                 setSelectedTeams((prevTeams) => {
                                   if (
                                     prevTeams.some(
                                       (selectedTeam) =>
-                                        selectedTeam.id === team.id
+                                        selectedTeam.id === team.id,
                                     )
                                   ) {
                                     return prevTeams.filter(
                                       (selectedTeam) =>
-                                        selectedTeam.id !== team.id
+                                        selectedTeam.id !== team.id,
                                     );
                                   } else {
                                     return [...prevTeams, team];

@@ -113,8 +113,6 @@ export function ProfileMenu() {
   );
 }
 
-// Nav list component
-
 export function Appbar() {
   return (
     <Navbar

@@ -9,34 +9,34 @@ import { Match } from "../../types";
 export default function LiveMatches() {
   const { user } = useContext(UserContext);
   const [selectedSports, setSelectedSports] = useState<number[]>(
-    user?.preferences?.sports || []
+    user?.preferences?.sports || [],
   );
   const [liveMatches, setLiveMatches] = useState<Match[]>([]);
-
-    
+  const [allMatches, setAllMatches] = useState<Match[]>([]);
 
   useEffect(() => {
-    const fetchAllMatchesFunction = async () => {
-      const data = await fetchAllMatches();
-      const allMatches = data.matches;
-
-      if (user && user.preferences.sports && selectedSports.length > 0) {
-        const selectedSportNames = sportnamewithID
-          .filter((s) => selectedSports.includes(s.id))
-          .map((s) => s.name);
-
-        const filteredMatches = allMatches.filter((m: any) =>
-          selectedSportNames.includes(m.sportName)
-        );
-
-        setLiveMatches(filteredMatches);
-      } else {
-        setLiveMatches(allMatches);
-      }
+    const fM = async () => {
+      const t = await fetchAllMatches();
+      setAllMatches(t.matches);
     };
+    fM();
+  }, []);
 
-    fetchAllMatchesFunction();
-  }, [user, selectedSports]);
+  useEffect(() => {
+    if (user && user.preferences.sports && selectedSports.length > 0) {
+      const selectedSportNames = sportnamewithID
+        .filter((s) => selectedSports.includes(s.id))
+        .map((s) => s.name);
+
+      const filteredMatches = allMatches?.filter((m: any) =>
+        selectedSportNames.includes(m.sportName),
+      );
+
+      setLiveMatches(filteredMatches || []);
+    } else {
+      setLiveMatches(allMatches);
+    }
+  }, [user, selectedSports, allMatches]);
 
   useEffect(() => {
     if (user) {

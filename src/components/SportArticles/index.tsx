@@ -6,7 +6,7 @@ import { UserContext } from "../../context/user";
 import { Tabs, TabsHeader, Tab, Typography } from "@material-tailwind/react";
 import { fetchAllArticles } from "../../utils/apiCallUtils";
 import { teamData } from "../../utils/helperFunctions";
-
+import ErrorBoundary from "../ErrorBoundary";
 export function Articles() {
   const { sport } = React.useContext(sportContext);
   const { user } = React.useContext(UserContext);
@@ -14,7 +14,7 @@ export function Articles() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [filterSportId, setFilterSportId] = useState<string | null>(null);
   const [selectedSports, setSelectedSports] = useState<number[]>(
-    user?.preferences?.sports || []
+    user?.preferences?.sports || [],
   );
 
   const selectedTeams: Team[] = user?.preferences?.teams || [];
@@ -47,7 +47,10 @@ export function Articles() {
       return article.sport.id === Number(filterSportId);
     }
     if (filterSportId == "all") {
-      return selectedSports.includes(article.sport.id);
+      if (selectedSports.length > 0) {
+        return selectedSports.includes(article.sport.id);
+      }
+      return article;
     }
     if (
       filterSportId !== "all" &&
@@ -72,9 +75,20 @@ export function Articles() {
     }
   });
 
-  const sportsToDisplay = user
-    ? sport.filter((s) => selectedSports.includes(s.id))
-    : sport;
+  let sportsToDisplay =
+    user && selectedSports.length > 0
+      ? sport.filter((s) => selectedSports.includes(s.id))
+      : sport;
+
+  useEffect(() => {
+    if (user && selectedSports.length > 0) {
+      sportsToDisplay = user
+        ? sport.filter((s) => selectedSports.includes(s.id))
+        : sport;
+    } else {
+      sportsToDisplay = sport;
+    }
+  }, [selectedSports]);
 
   const sportsTabs = [
     <Tab
@@ -99,21 +113,23 @@ export function Articles() {
 
   return (
     <div className="p-1 m-1 mt-5">
-      <Typography variant="h4" className="m-1 p-1" color="blue-gray">
-        Articles
-      </Typography>
-      <Tabs id="custom-animation" value={filterSportId || "all"}>
-        <TabsHeader>{sportsTabs}</TabsHeader>
-      </Tabs>
-      {filteredArticles.length > 0 ? (
-        filteredArticles.map((article) => (
-          <div className="flex justify-center" key={article.id}>
-            <HorizontalCard article={article} />
-          </div>
-        ))
-      ) : (
-        <div>No articles available for the selected sport.</div>
-      )}
+      <ErrorBoundary>
+        <Typography variant="h4" className="m-1 p-1" color="blue-gray">
+          Articles
+        </Typography>
+        <Tabs id="custom-animation" value={filterSportId || "all"}>
+          <TabsHeader>{sportsTabs}</TabsHeader>
+        </Tabs>
+        {filteredArticles.length > 0 ? (
+          filteredArticles.map((article) => (
+            <div className="flex justify-center" key={article.id}>
+              <HorizontalCard article={article} />
+            </div>
+          ))
+        ) : (
+          <div>No articles available for the selected sport.</div>
+        )}
+      </ErrorBoundary>
     </div>
   );
 }
