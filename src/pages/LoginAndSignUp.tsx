@@ -37,7 +37,7 @@ export default function LoginAndSignUp() {
       >
         <div className="max-w-lg w-full">
           <div className="mb-5 ml-3 p-2 text-center">
-            <img src="src/assets/crlogo1.png" alt="" />
+            <img src="/crlogo1.png" alt="" />
           </div>
           <Suspense fallback={<div>Loading...</div>}>
             {signupForm ? (
