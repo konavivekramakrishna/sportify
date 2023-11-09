@@ -1,108 +1,86 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signInUser } from "../utils/apiCallUtils";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import { LoginDataType } from "../types";
-import { Link as Navigate } from "react-router-dom";
 import { UserContext } from "../context/user";
+import { LoginDataType } from "../types";
 
 export default function Login(props: { handleSignupCB: () => void }) {
   const { setUser } = React.useContext(UserContext);
-  const [error, setError] = React.useState("");
-  const [rememberMe, setRememberMe] = React.useState(false);
+  const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const { register, handleSubmit } = useForm<LoginDataType>();
   const navigator = useNavigate();
-  const submit: SubmitHandler<LoginDataType> = async (data: any) => {
+
+  const submit: SubmitHandler<LoginDataType> = async (data) => {
     const { email, password } = data;
     try {
-      const data = await signInUser({ email, password });
-      if (!data.auth_token) {
+      const response = await signInUser({ email, password });
+      if (!response.auth_token) {
         setError("Invalid Credentials");
       } else {
         if (rememberMe) {
-          localStorage.setItem("token", data.auth_token);
+          localStorage.setItem("token", response.auth_token);
         } else {
-          sessionStorage.setItem("token", data.auth_token);
+          sessionStorage.setItem("token", response.auth_token);
         }
-        setUser(data.user);
-        localStorage.setItem("userData", JSON.stringify(data.user));
+        setUser(response.user);
+        localStorage.setItem("userData", JSON.stringify(response.user));
         navigator("/home");
       }
     } catch (error: any) {
-      setError(error.message);
+      setError("Invalid Credentials");
     }
   };
 
   return (
-    <>
-      <Typography component="h1" variant="h5">
+    <div className="mx-auto w-full max-w-md p-6 rounded-lg border border-gray-300">
+      <h1 className="text-3xl font-semibold text-gray-700 text-center mb-6">
         Login
-      </Typography>
-      <form onSubmit={handleSubmit(submit)}>
-        <TextField
-          margin="normal"
-          {...register("email", { required: true })}
-          fullWidth
-          id="email"
-          label="Email Id"
-          name="email"
-          autoFocus
-        />
-        <TextField
-          margin="normal"
-          fullWidth
-          {...register("password", { required: true })}
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-        />
+      </h1>
+      <form onSubmit={handleSubmit(submit)} className="space-y-4">
+        <div>
+          <input
+            type="email"
+            {...register("email", { required: true })}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+            placeholder="Email Id"
+          />
+        </div>
+        <div>
+          <input
+            type="password"
+            {...register("password", { required: true })}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+            placeholder="Password"
+          />
+        </div>
         {error && <div className="text-red-500">{error}</div>}
-        <FormControlLabel
-          control={
-            <Checkbox
-              value="remember"
-              color="primary"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-          }
-          label="Remember me"
-        />
-        <Button
+        <label className="flex items-center text-gray-800">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="mr-2"
+          />
+          Remember me
+        </label>
+        <button
           type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+          className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
         >
           Login
-        </Button>
-        <Grid container>
-          <Grid item xs>
-            <Navigate to={"/home"}>
-              <Link href="#" className="hover:cursor-pointer" variant="body2">
-                Home?
-              </Link>
-            </Navigate>
-          </Grid>
-          <Grid item>
-            <Link
-              onClick={props.handleSignupCB}
-              className="hover:cursor-pointer"
-              variant="body2"
-            >
-              Don't have an account? Sign Up
-            </Link>
-          </Grid>
-        </Grid>
+        </button>
+        <div className="mt-6 flex justify-between text-gray-800">
+          <Link to="/home" className="hover:cursor-pointer">
+            Home?
+          </Link>
+          <span onClick={props.handleSignupCB} className="hover:cursor-pointer">
+            Don't have an account? Sign Up
+          </span>
+        </div>
       </form>
-    </>
+    </div>
   );
 }

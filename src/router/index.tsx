@@ -1,9 +1,10 @@
 import React, { Suspense } from "react";
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import Preferences from "../components/Preferences";
-import Signout from "../components/Signout";
-//import ArticleModal from "../components/SportArticles/SportsArticleModal";
+const ResetPassword = React.lazy(() => import("../components/ResetPassword"));
+const Preferences = React.lazy(() => import("../components/Preferences"));
+const Signout = React.lazy(() => import("../components/Signout"));
+const Error = React.lazy(() => import("../components/404Error"));
 
 const ArticleModal = React.lazy(
   () => import("../components/SportArticles/SportsArticleModal"),
@@ -42,11 +43,24 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
+
+      {
+        path: "resetpassword",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ResetPassword />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
     path: "/signout",
-    element: <Signout />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <Signout />,
+      </Suspense>
+    ),
   },
   {
     path: "/auth",
@@ -55,7 +69,15 @@ const routes = createBrowserRouter([
         <LoginAndSignUp />
       </Suspense>
     ),
-    children: [],
+  },
+
+  {
+    path: "*",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <Error />
+      </Suspense>
+    ),
   },
 ]);
 

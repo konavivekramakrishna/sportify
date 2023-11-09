@@ -1,17 +1,11 @@
 import React, { useState } from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { createNewUser } from "../utils/apiCallUtils";
 import { SignUpInputDataType } from "../types";
 import { Link as Navigate } from "react-router-dom";
 import { UserContext } from "../context/user";
+
 export default function SignUp(props: { handleSignupCB: () => void }) {
   const { setUser } = React.useContext(UserContext);
   const navigator = useNavigate();
@@ -29,94 +23,73 @@ export default function SignUp(props: { handleSignupCB: () => void }) {
       });
 
       if (rememberMe) {
-        localStorage.setItem("token", res.token);
+        localStorage.setItem("token", res.auth_token);
       } else {
-        sessionStorage.setItem("token", res.token);
+        sessionStorage.setItem("token", res.auth_token);
       }
       setUser(res.user);
       localStorage.setItem("userData", JSON.stringify(res.user));
       navigator("/home");
     } catch (error: any) {
-      setError(error.message);
+      setError("Oops! Something went wrong.");
     }
   };
 
   return (
-    <div>
-      <Typography component="h1" variant="h5">
-        SignUp
-      </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          {...register("name", { required: true })}
-          id="name"
-          label="Username"
-          name="name"
-          autoFocus
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          {...register("email", { required: true })}
-          name="email"
-          label="Email"
-          type="email"
-          id="email"
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          {...register("password", { required: true })}
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-        />
-
-        <FormControlLabel
-          control={
-            <Checkbox
-              value="remember"
-              color="primary"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-          }
-          label="Remember me"
-        />
-        <Button
+    <div className="mx-auto w-full max-w-md p-6 rounded-lg border  border-gray-300">
+      <h1 className="text-3xl font-semibold text-gray-700 text-center mb-6">
+        Sign Up
+      </h1>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <input
+            type="text"
+            {...register("name", { required: true })}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+            placeholder="Username"
+          />
+        </div>
+        <div>
+          <input
+            type="email"
+            {...register("email", { required: true })}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+            placeholder="Email"
+          />
+        </div>
+        <div>
+          <input
+            type="password"
+            {...register("password", { required: true })}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue -300"
+            placeholder="Password"
+          />
+        </div>
+        <label className="flex items-center text-gray-800">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="mr-2"
+          />
+          Remember me
+        </label>
+        <button
           type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+          className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
         >
-          Sign In
-        </Button>
+          Sign Up
+        </button>
       </form>
-      <Grid container>
-        <Grid item xs>
-          <Navigate to={"/home"}>
-            <Link href="#" className="hover:cursor-pointer" variant="body2">
-              Home?
-            </Link>
-          </Navigate>
-        </Grid>
-        <Grid item>
-          <Link
-            onClick={props.handleSignupCB}
-            className="hover:cursor-pointer"
-            variant="body2"
-          >
-            Already have an account? Login
-          </Link>
-        </Grid>
-      </Grid>
-      {error && <div className="text-red-500">{error}</div>}
+      <div className="mt-6 flex justify-between text-gray-800">
+        <Navigate to="/home" className="hover:cursor-pointer">
+          Home?
+        </Navigate>
+        <span onClick={props.handleSignupCB} className="hover:cursor-pointer">
+          Already have an account? Login
+        </span>
+      </div>
+      {error && <div className="text-red-500 mt-4">{error}</div>}
     </div>
   );
 }

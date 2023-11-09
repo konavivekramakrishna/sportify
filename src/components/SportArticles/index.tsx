@@ -3,29 +3,34 @@ import { Article, Team } from "../../types";
 import { HorizontalCard } from "./SportArticleCard";
 import { sportContext } from "../../context/sports";
 import { UserContext } from "../../context/user";
-import { Tabs, TabsHeader, Tab, Typography } from "@material-tailwind/react";
 import { fetchAllArticles } from "../../utils/apiCallUtils";
 import { teamData } from "../../utils/helperFunctions";
 import ErrorBoundary from "../ErrorBoundary";
+
 export function Articles() {
   const { sport } = React.useContext(sportContext);
   const { user } = React.useContext(UserContext);
 
   const [articles, setArticles] = useState<Article[]>([]);
-  const [filterSportId, setFilterSportId] = useState<string | null>(null);
+  const [filterSportId, setFilterSportId] = useState<string | null>("all");
   const [selectedSports, setSelectedSports] = useState<number[]>(
     user?.preferences?.sports || [],
   );
 
   const selectedTeams: Team[] = user?.preferences?.teams || [];
 
-  const sportThasTeamsSelected = selectedSports.filter((sportId) => {
-    return selectedTeams.some((team) => teamData[sportId].includes(team.name));
-  });
+  const sportThasTeamsSelected =
+    (selectedSports?.length > 0 &&
+      selectedSports?.filter((sportId) => {
+        return selectedTeams.some(
+          (team) => teamData[sportId]?.includes(team.name),
+        );
+      })) ||
+    [];
 
   useEffect(() => {
     if (user) {
-      setSelectedSports(user.preferences.sports);
+      setSelectedSports(user?.preferences?.sports || []);
     }
   }, [user]);
 
@@ -33,7 +38,6 @@ export function Articles() {
     const fetchData = async () => {
       const articlesData = await fetchAllArticles();
       setArticles(articlesData);
-      setFilterSportId("all");
     };
 
     fetchData();
@@ -47,14 +51,14 @@ export function Articles() {
       return article.sport.id === Number(filterSportId);
     }
     if (filterSportId == "all") {
-      if (selectedSports.length > 0) {
-        return selectedSports.includes(article.sport.id);
+      if (selectedSports?.length > 0) {
+        return selectedSports?.includes(article.sport.id);
       }
       return article;
     }
     if (
       filterSportId !== "all" &&
-      !sportThasTeamsSelected.includes(Number(filterSportId))
+      !sportThasTeamsSelected?.includes(Number(filterSportId))
     ) {
       return article.sport.id === Number(filterSportId);
     }
@@ -75,59 +79,55 @@ export function Articles() {
     }
   });
 
-  let sportsToDisplay =
-    user && selectedSports.length > 0
-      ? sport.filter((s) => selectedSports.includes(s.id))
+  const sportsToDisplay =
+    user && selectedSports?.length > 0
+      ? sport.filter((s) => selectedSports?.includes(s.id))
       : sport;
-
-  useEffect(() => {
-    if (user && selectedSports.length > 0) {
-      sportsToDisplay = user
-        ? sport.filter((s) => selectedSports.includes(s.id))
-        : sport;
-    } else {
-      sportsToDisplay = sport;
-    }
-  }, [selectedSports]);
-
-  const sportsTabs = [
-    <Tab
-      onClick={() => setFilterSportId("all")}
-      value="all"
-      key="all"
-      className="text-blue-gray-500 h-10"
-    >
-      All
-    </Tab>,
-    ...sportsToDisplay.map((sport) => (
-      <Tab
-        onClick={() => setFilterSportId(String(sport.id))}
-        value={String(sport.id)}
-        key={sport.id}
-        className="text-blue-gray-500 h-10"
-      >
-        {sport.name}
-      </Tab>
-    )),
-  ];
 
   return (
     <div className="p-1 m-1 mt-5">
       <ErrorBoundary>
-        <Typography variant="h4" className="m-1 p-1" color="blue-gray">
-          Articles
-        </Typography>
-        <Tabs id="custom-animation" value={filterSportId || "all"}>
-          <TabsHeader>{sportsTabs}</TabsHeader>
-        </Tabs>
-        {filteredArticles.length > 0 ? (
+        <div className="flex items-center justify-center space-x-2 border border-gray-300 rounded-lg p-2  ">
+          <button
+            className={`
+              p-2 px-4 rounded-lg
+              ${
+                filterSportId === "all"
+                  ? "bg-blue-500 text-white border border-blue-500"
+                  : "text-blue-500 border border-blue-500"
+              }
+            `}
+            onClick={() => setFilterSportId("all")}
+          >
+            All
+          </button>
+          {sportsToDisplay.map((sportItem) => (
+            <button
+              key={sportItem.id}
+              className={`
+                p-2 px-4 rounded-lg
+                ${
+                  filterSportId === String(sportItem.id)
+                    ? "bg-blue-500 text-white border border-blue-500"
+                    : "text-blue-500 border border-blue-500"
+                }
+              `}
+              onClick={() => setFilterSportId(String(sportItem.id))}
+            >
+              {sportItem.name}
+            </button>
+          ))}
+        </div>
+        {filteredArticles?.length > 0 ? (
           filteredArticles.map((article) => (
             <div className="flex justify-center" key={article.id}>
               <HorizontalCard article={article} />
             </div>
           ))
         ) : (
-          <div>No articles available for the selected sport.</div>
+          <div className="mt-4 text-blue-500">
+            No articles available for the selected sport.
+          </div>
         )}
       </ErrorBoundary>
     </div>

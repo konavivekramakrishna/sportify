@@ -53,7 +53,7 @@ export const apiCall = async (
     }
   } catch (error) {
     console.error("Error parsing JSON:", error);
-    return null;
+    return JSON.stringify(error);
   }
 };
 
@@ -117,6 +117,10 @@ export const changePassword = async (data: any) => {
 
 export const createNewUser = async (data: any) => {
   return await apiCall("/users", "POST", data);
+};
+
+export const resetPassword = async (data: any) => {
+  return await apiCall("/user/password", "PATCH", data);
 };
 
 // preferences crud

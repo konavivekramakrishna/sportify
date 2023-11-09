@@ -1,66 +1,53 @@
-import * as React from "react";
+import { useState, lazy, Suspense, useEffect } from "react";
 
-import CssBaseline from "@mui/material/CssBaseline";
-
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import SignUp from "../components/SignUp";
-import Login from "../components/Login";
-
-const defaultTheme = createTheme();
+const SignUp = lazy(() => import("../components/SignUp"));
+const Login = lazy(() => import("../components/Login"));
 
 export default function LoginAndSignUp() {
-  const [signupForm, setSignupForm] = React.useState(false);
+  const [signupForm, setSignupForm] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleSignup = () => {
     setSignupForm(!signupForm);
   };
 
+  useEffect(() => {
+    const image = new Image();
+    image.src = "https://source.unsplash.com/random?wallpapers";
+    image.onload = () => {
+      setImageLoaded(true);
+    };
+  }, []);
+
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={8}
-          sx={{
-            backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
-            backgroundRepeat: "no-repeat",
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[50]
-                : theme.palette.grey[900],
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-        <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <div className="mt-5 mb-5">
-              <img src="src/assets/crlogo1.png" alt="" />
-            </div>
+    <div className="flex h-screen">
+      <div
+        className={`hidden md:block md:w-4/6 bg-cover bg-center ${
+          imageLoaded ? "block" : "hidden"
+        }`}
+        style={{
+          backgroundImage: "url(https://source.unsplash.com/random?wallpapers)",
+        }}
+      ></div>
+
+      <div
+        className={`w-full md:w-1/3 p-4 ${
+          imageLoaded ? "block" : "hidden"
+        }  flex items-center justify-center`}
+      >
+        <div className="max-w-lg w-full">
+          <div className="mb-5 ml-3 p-2 text-center">
+            <img src="src/assets/crlogo1.png" alt="" />
+          </div>
+          <Suspense fallback={<div>Loading...</div>}>
             {signupForm ? (
               <SignUp handleSignupCB={handleSignup} />
             ) : (
               <Login handleSignupCB={handleSignup} />
             )}
-          </Box>
-        </Grid>
-      </Grid>
-    </ThemeProvider>
+          </Suspense>
+        </div>
+      </div>
+    </div>
   );
 }

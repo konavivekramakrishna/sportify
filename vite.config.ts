@@ -11,8 +11,8 @@ export default defineConfig({
       },
       registerType: "autoUpdate",
       manifest: {
-        name: "Sports Pulse application",
-        short_name: "Sports Pulse",
+        name: "Sportify - Love For Sports",
+        short_name: "Sportify",
         icons: [
           {
             src: "/favicon.ico",

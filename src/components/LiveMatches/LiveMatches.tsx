@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from "react";
-import { fetchAllMatches } from "../../utils/apiCallUtils";
-import LiveMatchCard from "./LiveMatchCard";
 import { Typography } from "@material-tailwind/react";
+import LiveMatchCard from "./LiveMatchCard";
 import { UserContext } from "../../context/user";
 import { sportnamewithID } from "../../utils/helperFunctions";
+import { fetchAllMatches } from "../../utils/apiCallUtils";
 import { Match } from "../../types";
 
 export default function LiveMatches() {
@@ -15,24 +15,28 @@ export default function LiveMatches() {
   const [allMatches, setAllMatches] = useState<Match[]>([]);
 
   useEffect(() => {
-    const fM = async () => {
-      const t = await fetchAllMatches();
-      setAllMatches(t.matches);
+    const fetchMatches = async () => {
+      const result = await fetchAllMatches();
+      setAllMatches(result.matches);
     };
-    fM();
+    fetchMatches();
   }, []);
 
   useEffect(() => {
-    if (user && user.preferences.sports && selectedSports.length > 0) {
-      const selectedSportNames = sportnamewithID
-        .filter((s) => selectedSports.includes(s.id))
-        .map((s) => s.name);
+    if (user) {
+      const selectedSportNames = selectedSports
+        .map((id) => sportnamewithID.find((s) => s.id === id))
+        .filter(Boolean)
+        .map((s) => s?.name);
 
-      const filteredMatches = allMatches?.filter((m: any) =>
-        selectedSportNames.includes(m.sportName),
-      );
-
-      setLiveMatches(filteredMatches || []);
+      if (selectedSportNames.length > 0) {
+        const filteredMatches = allMatches.filter((m) =>
+          selectedSportNames.includes(m.sportName),
+        );
+        setLiveMatches(filteredMatches);
+      } else {
+        setLiveMatches(allMatches);
+      }
     } else {
       setLiveMatches(allMatches);
     }
@@ -40,7 +44,7 @@ export default function LiveMatches() {
 
   useEffect(() => {
     if (user) {
-      setSelectedSports(user.preferences.sports);
+      setSelectedSports(user.preferences?.sports || []);
     }
   }, [user]);
 

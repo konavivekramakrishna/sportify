@@ -36,7 +36,7 @@ const profileMenuItems = [
   {
     label: "Reset Password",
     icon: Cog6ToothIcon,
-    action: "/resetpassword",
+    action: "/home/resetpassword",
   },
 
   {
