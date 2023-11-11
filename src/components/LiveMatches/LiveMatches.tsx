@@ -9,7 +9,7 @@ import { Match, Team } from "../../types";
 function teamsWithUnselectedSports(
   selectedTeams: any[],
   selectedSports: any[],
-  sportnamewithID: any[],
+  sportnamewithID: any[]
 ): Team[] {
   const selectedSportNames = selectedSports
     .map((id) => sportnamewithID.find((s) => s.id === id))
@@ -22,7 +22,7 @@ function teamsWithUnselectedSports(
       .map((sport) => sport.name);
 
     return !teamSports.some((teamSport) =>
-      selectedSportNames.includes(teamSport),
+      selectedSportNames.includes(teamSport)
     );
   });
 
@@ -32,10 +32,10 @@ function teamsWithUnselectedSports(
 export default function LiveMatches() {
   const { user } = useContext(UserContext);
   const [selectedSports, setSelectedSports] = useState<number[]>(
-    user?.preferences?.sports || [],
+    user?.preferences?.sports || []
   );
   const [selectedTeams, setSelectedTeams] = useState<Team[]>(
-    user?.preferences?.teams || [],
+    user?.preferences?.teams || []
   );
 
   const [liveMatches, setLiveMatches] = useState<Match[]>([]);
@@ -59,7 +59,7 @@ export default function LiveMatches() {
       let unselectedTeams = teamsWithUnselectedSports(
         selectedTeams,
         selectedSports,
-        sportnamewithID,
+        sportnamewithID
       );
 
       let unselectedTeamsNames = unselectedTeams.map((s) => s.name);
@@ -69,7 +69,7 @@ export default function LiveMatches() {
           const teamNames = m.teams.map((team) => team.name);
           const matchIncludedBySport = selectedSportNames.includes(m.sportName);
           const matchIncludedByTeam = unselectedTeams.some((team: any) =>
-            teamNames.includes(team.plays),
+            teamNames.includes(team.plays)
           );
 
           return matchIncludedBySport || matchIncludedByTeam;
@@ -95,7 +95,7 @@ export default function LiveMatches() {
   useEffect(() => {
     if (user) {
       setSelectedSports(user.preferences?.sports || []);
-      setSelectedTeams(user?.preferences.teams || []);
+      setSelectedTeams(user?.preferences?.teams || []);
     }
   }, [user]);
 
