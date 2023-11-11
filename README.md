@@ -50,6 +50,8 @@ Sportify is a dynamic and feature-rich web application designed to keep sports e
 ![image](https://github.com/konavivekramakrishna/sportify/assets/101407963/b0e226a5-98b2-4f93-bece-22b185f72d7b)
 ![image](https://github.com/konavivekramakrishna/sportify/assets/101407963/130ee0f5-8057-4cb0-9032-75a968d3ea24)
 ![image](https://github.com/konavivekramakrishna/sportify/assets/101407963/bec5ab52-3c24-4249-bfd0-c9c084cd0cbb)
+![image](https://github.com/konavivekramakrishna/sportify/assets/101407963/d7ca3679-fb75-4bb9-9e3d-a5b49c69785c)
+
 
 ## Optional Features
 
