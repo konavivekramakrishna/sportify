@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import ErrorBoundary from "../components/ErrorBoundary";
 const ResetPassword = React.lazy(() => import("../components/ResetPassword"));
 const Preferences = React.lazy(() => import("../components/Preferences"));
 const Signout = React.lazy(() => import("../components/Signout"));
@@ -31,7 +32,9 @@ const routes = createBrowserRouter([
         path: "article/:id",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <ArticleModal />
+            <ErrorBoundary>
+              <ArticleModal />
+            </ErrorBoundary>
           </Suspense>
         ),
       },

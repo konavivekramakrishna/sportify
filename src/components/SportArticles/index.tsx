@@ -14,7 +14,10 @@ export function Articles() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [filterSportId, setFilterSportId] = useState<string | null>("all");
   const [selectedSports, setSelectedSports] = useState<number[]>(
-    user?.preferences?.sports || [],
+    user?.preferences?.sports || []
+  );
+  const [favArticles, setFavArticles] = useState(
+    user?.preferences?.favArray || []
   );
 
   const selectedTeams: Team[] = user?.preferences?.teams || [];
@@ -23,7 +26,7 @@ export function Articles() {
     (selectedSports?.length > 0 &&
       selectedSports?.filter((sportId) => {
         return selectedTeams.some(
-          (team) => teamData[sportId]?.includes(team.name),
+          (team) => teamData[sportId]?.includes(team.name)
         );
       })) ||
     [];
@@ -31,6 +34,7 @@ export function Articles() {
   useEffect(() => {
     if (user) {
       setSelectedSports(user?.preferences?.sports || []);
+      setFavArticles(user?.preferences?.favArray || []);
     }
   }, [user]);
 
@@ -49,6 +53,10 @@ export function Articles() {
     }
     if (!user && filterSportId !== "all") {
       return article.sport.id === Number(filterSportId);
+    }
+    if (filterSportId == "Favorites") {
+      console.log(favArticles);
+      return true ? favArticles.includes(String(article.id)) : false;
     }
     if (filterSportId == "all") {
       if (selectedSports?.length > 0) {
@@ -117,6 +125,21 @@ export function Articles() {
               {sportItem.name}
             </button>
           ))}
+          {user && (
+            <button
+              className={`
+              p-2 px-4 rounded-lg
+              ${
+                filterSportId === "Favorites"
+                  ? "bg-blue-500 text-white border border-blue-500"
+                  : "text-blue-500 border border-blue-500"
+              }
+            `}
+              onClick={() => setFilterSportId("Favorites")}
+            >
+              Favorites
+            </button>
+          )}
         </div>
         {filteredArticles?.length > 0 ? (
           filteredArticles.map((article) => (
