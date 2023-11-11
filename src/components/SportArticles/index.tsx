@@ -58,7 +58,7 @@ export function Articles() {
     }
     if (
       filterSportId !== "all" &&
-      !sportThasTeamsSelected?.includes(Number(filterSportId))
+      selectedSports?.includes(Number(filterSportId))
     ) {
       return article.sport.id === Number(filterSportId);
     }
